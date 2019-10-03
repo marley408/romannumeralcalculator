@@ -5,7 +5,7 @@ export default function RomanNumeralComponent() {
   const [input, updateInput] = useState('');
 
   const SCALE_DEGREE = {
-    //   scale of 1
+    //   scale of 1 (single digit)
     1: [
       { 1: 'I' },
       { 2: 'II' },
@@ -17,7 +17,7 @@ export default function RomanNumeralComponent() {
       { 8: 'VIII' },
       { 9: 'IX' }
     ],
-    // scale of 10
+    // scale of 10  (1 is 10, 2 is 20, etc)
     2: [
       { 1: 'X' },
       { 2: 'XX' },
@@ -29,7 +29,7 @@ export default function RomanNumeralComponent() {
       { 8: 'LXXX' },
       { 9: 'XC' }
     ],
-    // scale of 100
+    // scale of 100 (1 is 100, 2 is 200, etc)
     3: [
       { 1: 'C' },
       { 2: 'CC' },
@@ -43,21 +43,27 @@ export default function RomanNumeralComponent() {
     ]
   };
 
+  //  we need the scale degree so we know which array to search in, digit will correspond to the appropriate roman numeral value
   const getRomanNumeralFromScaleDegree = (degree, digit) => {
     console.log(degree, digit);
+    // convert digit back to number in order to use number as a key, and therefore capture its value, from the appropriate array
     const convertToNumber = parseInt(digit);
 
-    // terminate early because there's no roman numeral for ZERO
+    // terminate early because there's no roman numeral for ZERO, so return nothing
     if (convertToNumber === 0) {
       return '';
     }
 
-    return SCALE_DEGREE[degree]
-      .map(function(obj) {
-        return obj[convertToNumber];
-      })
-      .filter(Boolean)
-      .join('');
+    // map through the correct "degree" array and return roman numeral
+    return (
+      SCALE_DEGREE[degree]
+        .map(function(obj) {
+          return obj[convertToNumber];
+        })
+        //  we filter out only truthy values because .map will return undefined for all objects regardless of if its the one we need (the value of the key equal to convertToNumber)
+        .filter(Boolean)
+        .join('')
+    );
   };
 
   const addAndConvertToRomanNumerals = ints => {
@@ -73,9 +79,10 @@ export default function RomanNumeralComponent() {
       return 'M';
     }
 
-    // turn sum of user input numbers into array to grab specific position
+    // turn sum of user input numbers into array to grab specific digit according to its position
     const sumToDigits = arrSum.toString().split('');
 
+    // we know scale is a single digit
     if (arrSum < 10) {
       return getRomanNumeralFromScaleDegree(1, arrSum);
     }
