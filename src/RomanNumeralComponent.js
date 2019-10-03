@@ -4,6 +4,7 @@ export default function RomanNumeralComponent() {
   const [calculatedAnswer, updateAnswer] = useState('Nulla');
   const [input, updateInput] = useState('');
 
+  // scale degree refers to the decimal place of each digit of the number. e.g ones, tens, hundreds
   const SCALE_DEGREE = {
     //   scale of 1 (single digit)
     1: [
@@ -47,7 +48,7 @@ export default function RomanNumeralComponent() {
   const getRomanNumeralFromScaleDegree = (degree, digit) => {
     console.log(degree, digit);
     // convert digit back to number in order to use number as a key, and therefore capture its value, from the appropriate array
-    const convertToNumber = parseInt(digit);
+    const convertToNumber = parseInt(digit, 10);
 
     // terminate early because there's no roman numeral for ZERO, so return nothing
     if (convertToNumber === 0) {
@@ -60,27 +61,33 @@ export default function RomanNumeralComponent() {
         .map(function(obj) {
           return obj[convertToNumber];
         })
-        //  we filter out only truthy values because .map will return undefined for all objects regardless of if its the one we need (the value of the key equal to convertToNumber)
+        //  Remove all falsey values from array because .map will return undefined for all other objects except the one we're specifying
         .filter(Boolean)
+        // concatenate array elements into string
         .join('')
     );
   };
 
   const addAndConvertToRomanNumerals = ints => {
-    // here we add the integers of the numbers array
-    const arrSum = ints.reduce((a, b) => a + b, 0);
+    // here we add the integers of the numbers array.
+    const arrSum = ints.reduce(
+      (accumulator, current) => accumulator + current,
+      0
+    );
 
     // check if arrSum is greater than 1000 in order to terminate early
     if (arrSum > 1000) {
       return alert('Numbers cannot add up to more than 1000');
     }
 
+    // limit is 1000, so no need to store it in scale degree.
     if (arrSum === 1000) {
       return 'M';
     }
 
     // turn sum of user input numbers into array to grab specific digit according to its position
     const sumToDigits = arrSum.toString().split('');
+    console.log(sumToDigits);
 
     // we know scale is a single digit
     if (arrSum < 10) {
@@ -91,11 +98,11 @@ export default function RomanNumeralComponent() {
     if (arrSum < 100 && arrSum >= 10) {
       const firstRomanNumeral = getRomanNumeralFromScaleDegree(
         2,
-        sumToDigits[0] // tenth position
+        sumToDigits[0] // target digit in the tenth position
       );
       const secondRomanNumeral = getRomanNumeralFromScaleDegree(
         1,
-        sumToDigits[1] // first position
+        sumToDigits[1] // target digit in the first position
       );
 
       return firstRomanNumeral + secondRomanNumeral;
